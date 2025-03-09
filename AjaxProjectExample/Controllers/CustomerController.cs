@@ -44,7 +44,7 @@ namespace AjaxProjectExample.Controllers
 
         public IActionResult GetCustomer(int id)
         {
-            var value = (_context.Customers.Find(id));
+            var value = _context.Customers.Find(id);
             var jsonValues = JsonConvert.SerializeObject(value);
             return Json(jsonValues);
         }

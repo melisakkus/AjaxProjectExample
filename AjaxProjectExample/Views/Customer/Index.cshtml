@@ -1,9 +1,9 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Index";
 }
 <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <h1>Ajax Müşteri Hizmetleri</h1>
 <br />
@@ -17,6 +17,38 @@
 
 <div class="alert alert-primary">Müşteri Listesi</div>
 <div id="customerList">
+</div>
+<hr />
+
+<div>
+    <label>Müşteri Adı</label>
+    <input type="text" id="txtcustomername" class="form-control" />
+    <br />
+    <label>Müşteri Soyadı</label>
+    <input type="text" id="txtcustomersurname" class="form-control" />
+    <br />
+</div>
+<hr />
+
+<div>
+    <input type="text" class="form-control" id="txtdeleteid" placeholder="Silinecek Id Giriniz" />
+</div>
+<hr />
+
+<div>
+    <input type="text" id="txteditid" class="form-control" placeholder="Güncellenecek Müşteri Id" />
+    <br />
+    <input type="text" id="txteditname" class="form-control" placeholder="Güncellenecek Müşteri Adı" />
+    <br />
+    <input type="text" id="txteditsurname" class="form-control"  placeholder="Güncellenecek Müşteri Soyadı" />
+    <br />
+
+</div>
+<hr />
+
+<div>
+    <input type="text" id="txtgetid" class="form-control" placeholder="Getirilecek Müşteri Id" />
+
 </div>
 
 
@@ -32,21 +64,82 @@
                 console.log(customers);
 
                 let tablehtml = "<table class=table table-bordered>"
-                +"<tr>"
-                +"<th>Musteri Id</th>"
-                +"<th>Musteri Adı</th>"
-                +"<th>Musteri Soyadı</th>"
-                +"</tr>"
+                    + "<tr>"
+                    + "<th>Musteri Id</th>"
+                    + "<th>Musteri Adı</th>"
+                    + "<th>Musteri Soyadı</th>"
+                    + "</tr>"
 
                 $.each(customers, (index, value) => {
                     tablehtml += `<tr>`
                         + `<td>${value.CustomerId}</td>`
                         + `<td>${value.CustomerName}</td>`
                         + `<td>${value.CustomerSurname}</td>`
+                        + `</tr>`
                 });
-                tablehtml+="</table>"
+                tablehtml += "</table>"
                 $("#customerList").html(tablehtml);
             }
         });
     });
+
+    $("#btn2").click(function () {
+        let values = {
+            CustomerName: $("#txtcustomername").val(),
+            CustomerSurname: $("#txtcustomersurname").val()
+        };
+
+        $.ajax({
+            url: "/Customer/CreateCustomer/",
+            data: values,
+            success: function (funk2) {
+                let result = jQuery.parseJSON(funk2);
+                alert("İşlem başarılı!");
+            }
+        });
+    });
+
+    $("#btn3").click(function () {
+        let id = $("#txtdeleteid").val();
+        $.ajax({
+            url:"/Customer/DeleteCustomer/"+ id,
+            success: function (funk3) {
+                swal("Silme işlemi başarılı!", "Müşteri silindi!", "success");
+            }
+        });
+    });
+
+    $("#btn4").click(function () {
+        let value = {
+            CustomerId: $("#txteditid").val(),
+            CustomerName: $("#txteditname").val(),
+            CustomerSurname: $("#txteditsurname").val()
+        };
+
+        $.ajax({
+            url: "/Customer/UpdateCustomer/",
+            data: value,
+            success: function (funk4) {
+                swal("Güncelleme işlemi başarılı!", "Müşteri güncellendi!", "success");
+            }
+        });
+    });
+
+    $("#btn5").click(function () {
+        let id = $("#txtgetid").val();
+        $.ajax({
+            contentType: "application/json", //veri listeleme yapacağım içeriğini yazalım
+            dataType: "json",
+            url: "/Customer/GetCustomer/" + id,
+            success: function (funk5) {
+                let customer = jQuery.parseJSON(funk5);
+                console.log(customer);
+                swal("Müşteri Bilgileri", "Müşteri Adı: " + customer.CustomerName + " Müşteri Soyadı: " + customer.CustomerSurname, "info");
+            }
+        });
+    });
+
 </script> 
+
+@* funkları detaylı kullan alt satırda *@
+@* idye göre getirme işlemi sırasında gelen veriyi tabloda göster *@
