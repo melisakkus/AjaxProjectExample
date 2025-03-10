@@ -20,6 +20,9 @@
 </div>
 <hr />
 
+<div id="getCustomer">
+</div>
+
 <div>
     <label>Müşteri Adı</label>
     <input type="text" id="txtcustomername" class="form-control" />
@@ -40,19 +43,16 @@
     <br />
     <input type="text" id="txteditname" class="form-control" placeholder="Güncellenecek Müşteri Adı" />
     <br />
-    <input type="text" id="txteditsurname" class="form-control"  placeholder="Güncellenecek Müşteri Soyadı" />
-    <br />
-
+    <input type="text" id="txteditsurname" class="form-control" placeholder="Güncellenecek Müşteri Soyadı" />
 </div>
 <hr />
 
 <div>
     <input type="text" id="txtgetid" class="form-control" placeholder="Getirilecek Müşteri Id" />
-
 </div>
 
-
 <script>
+
     $("#btn1").click(function () {
         $.ajax({
             contentType: "application/json",
@@ -93,8 +93,13 @@
             url: "/Customer/CreateCustomer/",
             data: values,
             success: function (funk2) {
-                let result = jQuery.parseJSON(funk2);
-                alert("İşlem başarılı!");
+                let customer = jQuery.parseJSON(funk2);
+                swal({
+                    title: "Başarılı",
+                    text: "'" + customer.CustomerName + " " + customer.CustomerSurname + "'" + " başarılı bir şekilde kaydedilmiştir.",
+                    icon: "success",
+                    html: true
+                });
             }
         });
     });
@@ -102,7 +107,7 @@
     $("#btn3").click(function () {
         let id = $("#txtdeleteid").val();
         $.ajax({
-            url:"/Customer/DeleteCustomer/"+ id,
+            url: "/Customer/DeleteCustomer/" + id,
             success: function (funk3) {
                 swal("Silme işlemi başarılı!", "Müşteri silindi!", "success");
             }
@@ -128,18 +133,31 @@
     $("#btn5").click(function () {
         let id = $("#txtgetid").val();
         $.ajax({
-            contentType: "application/json", //veri listeleme yapacağım içeriğini yazalım
+            contentType: "application/json", 
             dataType: "json",
             url: "/Customer/GetCustomer/" + id,
             success: function (funk5) {
                 let customer = jQuery.parseJSON(funk5);
                 console.log(customer);
-                swal("Müşteri Bilgileri", "Müşteri Adı: " + customer.CustomerName + " Müşteri Soyadı: " + customer.CustomerSurname, "info");
+
+                let tablehtml2 = "<table class=table table-bordered>"
+                    + "<tr>"
+                    + "<th>Müşteri Id</th>"
+                    + "<th>Müşteri Adı</th>"
+                    + "<th>Müşteri Soyadı</th>"
+                    + "</tr>"
+
+                tablehtml2 += `<tr>`
+                    + `<td>${customer.CustomerId}</td>`
+                    + `<td>${customer.CustomerName}</td>`
+                    + `<td>${customer.CustomerSurname}</td>`
+                    + `</tr>`
+
+                tablehtml2 += "</table>"
+                $("#getCustomer").html(tablehtml2);
             }
         });
     });
 
-</script> 
+</script>
 
-@* funkları detaylı kullan alt satırda *@
-@* idye göre getirme işlemi sırasında gelen veriyi tabloda göster *@
